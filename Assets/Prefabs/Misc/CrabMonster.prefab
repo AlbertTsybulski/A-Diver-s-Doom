@@ -4423,34 +4423,46 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 5850578553012415794}
   player: {fileID: 0}
-  detectionRange: 100
-  chaseRange: 100
+  detectionRange: 300
+  chaseRange: 150
   attackRange: 15
-  playerLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  wanderSpeed: 5
-  chaseSpeed: 10
+  wanderSpeed: 25
+  chaseSpeed: 40
   wanderRadius: 100
   wanderInterval: 3
+  waterLayer:
+    serializedVersion: 2
+    m_Bits: 16
+  waterCheckRadius: 10
+  exitWaterSpeed: 20
+  shoreSearchRadius: 500
+  climbableLayer:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  climbSpeed: 10
+  climbDetectionDistance: 1.5
+  maxClimbAngle: 90
+  rotationSpeed: 8
+  enableClimbing: 1
   attackDamage: 25
-  attackCooldown: 2
+  attackCooldown: 0.25
   attackAnimations:
   - Attack_1
   - Attack_2
   - Attack_3
-  intimidateAnimations:
-  - Intimidate_1
-  - Intimidate_2
-  - Intimidate_3
-  intimidationDuration: 5
-  intimidateSounds: []
   walkingSlowParam: Walk_Cycle_2
   walkingFastParam: Walk_Cycle_1
   idleParam: Fight_Idle_1
   currentState: 0
-  attackSounds: []
-  chaseSounds: []
+  attackSounds:
+  - {fileID: 8300000, guid: 33c98ae74154ef847abda858170114c4, type: 3}
+  - {fileID: 8300000, guid: 5aa45d78b1d2cd442b8b369f8465cb96, type: 3}
+  - {fileID: 8300000, guid: 28a24316f79076e41af8a0acc77fe4a1, type: 3}
+  chaseSounds:
+  - {fileID: 8300000, guid: 11c096d493913d746b06fd25a258115c, type: 3}
+  - {fileID: 8300000, guid: 12fdd877479040a42a766cdb32e65e98, type: 3}
+  - {fileID: 8300000, guid: 7d11fbfbc9e3b0149ace625ae0329949, type: 3}
+  enableDebugLogs: 1
 --- !u!1 &5792748071347383548
 GameObject:
   m_ObjectHideFlags: 0

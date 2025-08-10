@@ -387,7 +387,7 @@ GameObject:
   - component: {fileID: 45093690}
   - component: {fileID: 45093689}
   - component: {fileID: 45093691}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(2000.00, 0.00, -1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -594,7 +594,7 @@ GameObject:
   - component: {fileID: 49652197}
   - component: {fileID: 49652196}
   - component: {fileID: 49652198}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(1000.00, 0.00, 2000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -936,7 +936,7 @@ GameObject:
   - component: {fileID: 105853179}
   - component: {fileID: 105853178}
   - component: {fileID: 105853180}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(2000.00, 0.00, 2000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1564,7 +1564,7 @@ GameObject:
   - component: {fileID: 132968388}
   - component: {fileID: 132968387}
   - component: {fileID: 132968389}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(4000.00, 0.00, 0.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1710,7 +1710,7 @@ GameObject:
   - component: {fileID: 155005194}
   - component: {fileID: 155005193}
   - component: {fileID: 155005195}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(0.00, 0.00, -4000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2019,7 +2019,7 @@ GameObject:
   - component: {fileID: 198245006}
   - component: {fileID: 198245005}
   - component: {fileID: 198245007}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(2000.00, 0.00, 0.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2262,7 +2262,7 @@ GameObject:
   - component: {fileID: 220869326}
   - component: {fileID: 220869325}
   - component: {fileID: 220869327}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(-2000.00, 0.00, 1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2393,7 +2393,7 @@ GameObject:
   - component: {fileID: 223455037}
   - component: {fileID: 223455036}
   - component: {fileID: 223455038}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(0.00, 0.00, 2000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2809,8 +2809,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   crabMonsterPrefab: {fileID: 5792744366562842766, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-  spawnCount: 20
-  spawnRadius: 1000
+  spawnCount: 500
+  spawnRadius: 750
   minDistanceFromPlayer: 5
   groundLayer:
     serializedVersion: 2
@@ -3435,7 +3435,7 @@ GameObject:
   - component: {fileID: 431885683}
   - component: {fileID: 431885685}
   - component: {fileID: 431885686}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(0.00, 0.00, 0.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3862,7 +3862,7 @@ GameObject:
   - component: {fileID: 486294497}
   - component: {fileID: 486294496}
   - component: {fileID: 486294498}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(-1000.00, 0.00, 1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4161,7 +4161,7 @@ GameObject:
   - component: {fileID: 534895523}
   - component: {fileID: 534895522}
   - component: {fileID: 534895524}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(0.00, 0.00, -2000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4626,6 +4626,114 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1568453601}
   m_SourcePrefab: {fileID: 100100000, guid: 7097ba7ba649e1f41bba232312bdcbd8, type: 3}
+--- !u!1 &598676359
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 598676360}
+  - component: {fileID: 598676363}
+  - component: {fileID: 598676362}
+  - component: {fileID: 598676361}
+  m_Layer: 3
+  m_Name: Cube
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &598676360
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 598676359}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 500, y: 100, z: 550}
+  m_LocalScale: {x: 1000, y: 600, z: 1050}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 728896791}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &598676361
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 598676359}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &598676362
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 598676359}
+  m_Enabled: 0
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &598676363
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 598676359}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!4 &604453660 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1507636620937791777, guid: 7097ba7ba649e1f41bba232312bdcbd8, type: 3}
@@ -5006,7 +5114,7 @@ GameObject:
   - component: {fileID: 715022419}
   - component: {fileID: 715022418}
   - component: {fileID: 715022420}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(1000.00, 0.00, -1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5195,6 +5303,7 @@ Transform:
   - {fileID: 1201844657}
   - {fileID: 105853177}
   - {fileID: 1291965823}
+  - {fileID: 598676360}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &731599005 stripped
@@ -5297,7 +5406,7 @@ GameObject:
   - component: {fileID: 761616437}
   - component: {fileID: 761616436}
   - component: {fileID: 761616438}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(1000.00, 0.00, -2000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6343,7 +6452,7 @@ GameObject:
   - component: {fileID: 946887644}
   - component: {fileID: 946887643}
   - component: {fileID: 946887645}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(0.00, 0.00, 4000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6474,7 +6583,7 @@ GameObject:
   - component: {fileID: 950286700}
   - component: {fileID: 950286699}
   - component: {fileID: 950286701}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(3000.00, 0.00, 0.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6642,7 +6751,7 @@ GameObject:
   - component: {fileID: 974965177}
   - component: {fileID: 974965179}
   - component: {fileID: 974965180}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(-1000.00, 0.00, 0.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6811,7 +6920,7 @@ GameObject:
   - component: {fileID: 980730294}
   - component: {fileID: 980730296}
   - component: {fileID: 980730297}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(0.00, 0.00, -1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6979,7 +7088,7 @@ GameObject:
   - component: {fileID: 1001541874}
   - component: {fileID: 1001541873}
   - component: {fileID: 1001541875}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(2000.00, 0.00, -2000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7110,7 +7219,7 @@ GameObject:
   - component: {fileID: 1007276034}
   - component: {fileID: 1007276033}
   - component: {fileID: 1007276035}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(-4000.00, 0.00, 0.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7229,99 +7338,6 @@ MonoBehaviour:
   description: Add this component to GameObjects to define their surface type for
     footstep sounds. For terrain objects, enable 'Is Terrain Surface' and drag terrain
     layers to create mappings.
---- !u!1001 &1020209512
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 5792744366562842766, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: m_Name
-      value: CrabMonster
-      objectReference: {fileID: 0}
-    - target: {fileID: 5794526363542072584, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 684.27875
-      objectReference: {fileID: 0}
-    - target: {fileID: 5794526363542072584, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 99.753944
-      objectReference: {fileID: 0}
-    - target: {fileID: 5794526363542072584, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 1025.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 5794526363542072584, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5794526363542072584, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5794526363542072584, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5794526363542072584, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5794526363542072584, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5794526363542072584, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5794526363542072584, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6845616790442712516, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: m_Convex
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: chaseRange
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: chaseSpeed
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: attackRange
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: wanderSpeed
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: attackCooldown
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: detectionRange
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: playerLayer.m_Bits
-      value: 64
-      objectReference: {fileID: 0}
-    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: intimidationDuration
-      value: 5
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
 --- !u!1 &1020441149 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1507636620937791836, guid: 7097ba7ba649e1f41bba232312bdcbd8, type: 3}
@@ -7794,7 +7810,7 @@ GameObject:
   - component: {fileID: 1141203050}
   - component: {fileID: 1141203049}
   - component: {fileID: 1141203051}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(3000.00, 0.00, -1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7926,7 +7942,7 @@ GameObject:
   - component: {fileID: 1147705430}
   - component: {fileID: 1147705432}
   - component: {fileID: 1147705433}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(1000.00, 0.00, 0.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8089,7 +8105,7 @@ GameObject:
   - component: {fileID: 1169762268}
   - component: {fileID: 1169762267}
   - component: {fileID: 1169762269}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(-2000.00, 0.00, 0.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8299,7 +8315,7 @@ GameObject:
   - component: {fileID: 1201844659}
   - component: {fileID: 1201844658}
   - component: {fileID: 1201844660}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(3000.00, 0.00, 1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8588,7 +8604,7 @@ GameObject:
   - component: {fileID: 1222900096}
   - component: {fileID: 1222900098}
   - component: {fileID: 1222900099}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(0.00, 0.00, 1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8830,7 +8846,7 @@ GameObject:
   - component: {fileID: 1227983065}
   - component: {fileID: 1227983064}
   - component: {fileID: 1227983066}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(-1000.00, 0.00, -1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9125,7 +9141,7 @@ GameObject:
   - component: {fileID: 1249121122}
   - component: {fileID: 1249121121}
   - component: {fileID: 1249121123}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(-1000.00, 0.00, 3000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9439,7 +9455,7 @@ GameObject:
   - component: {fileID: 1267555416}
   - component: {fileID: 1267555415}
   - component: {fileID: 1267555417}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(-1000.00, 0.00, 2000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9832,7 +9848,7 @@ GameObject:
   - component: {fileID: 1291965825}
   - component: {fileID: 1291965824}
   - component: {fileID: 1291965826}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(1000.00, 0.00, 3000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10147,7 +10163,7 @@ GameObject:
   - component: {fileID: 1338539797}
   - component: {fileID: 1338539796}
   - component: {fileID: 1338539798}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(-2000.00, 0.00, -2000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10435,7 +10451,7 @@ GameObject:
   - component: {fileID: 1386231436}
   - component: {fileID: 1386231435}
   - component: {fileID: 1386231437}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(2000.00, 0.00, 1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10597,7 +10613,7 @@ GameObject:
   - component: {fileID: 1403833562}
   - component: {fileID: 1403833561}
   - component: {fileID: 1403833563}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(0.00, 0.00, 3000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10923,7 +10939,7 @@ GameObject:
   - component: {fileID: 1462773455}
   - component: {fileID: 1462773454}
   - component: {fileID: 1462773456}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(1000.00, 0.00, 1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11458,7 +11474,7 @@ GameObject:
   - component: {fileID: 1549559933}
   - component: {fileID: 1549559932}
   - component: {fileID: 1549559934}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(-3000.00, 0.00, -1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11683,6 +11699,11 @@ MonoBehaviour:
   OnPlayerDied:
     m_PersistentCalls:
       m_Calls: []
+--- !u!4 &1557585880 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4459864850019384738, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
+  m_PrefabInstance: {fileID: 1710470198}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1565159392
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12074,7 +12095,7 @@ GameObject:
   - component: {fileID: 1658640521}
   - component: {fileID: 1658640520}
   - component: {fileID: 1658640522}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(-3000.00, 0.00, 0.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12367,7 +12388,7 @@ GameObject:
   - component: {fileID: 1702869206}
   - component: {fileID: 1702869205}
   - component: {fileID: 1702869207}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(-2000.00, 0.00, -1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12720,7 +12741,7 @@ GameObject:
   - component: {fileID: 1716809250}
   - component: {fileID: 1716809249}
   - component: {fileID: 1716809251}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(-1000.00, 0.00, -3000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13063,7 +13084,7 @@ GameObject:
   - component: {fileID: 1741956792}
   - component: {fileID: 1741956791}
   - component: {fileID: 1741956793}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(-1000.00, 0.00, -2000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13406,7 +13427,7 @@ GameObject:
   - component: {fileID: 1775192347}
   - component: {fileID: 1775192346}
   - component: {fileID: 1775192348}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(1000.00, 0.00, -3000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14313,7 +14334,7 @@ GameObject:
   - component: {fileID: 1968486970}
   - component: {fileID: 1968486969}
   - component: {fileID: 1968486971}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(-2000.00, 0.00, 2000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14777,7 +14798,7 @@ GameObject:
   - component: {fileID: 2045278970}
   - component: {fileID: 2045278969}
   - component: {fileID: 2045278971}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(-3000.00, 0.00, 1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15256,7 +15277,7 @@ GameObject:
   - component: {fileID: 2116171628}
   - component: {fileID: 2116171627}
   - component: {fileID: 2116171629}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain_(0.00, 0.00, -3000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15375,6 +15396,127 @@ MonoBehaviour:
   description: Add this component to GameObjects to define their surface type for
     footstep sounds. For terrain objects, enable 'Is Terrain Surface' and drag terrain
     layers to create mappings.
+--- !u!1001 &2133103746
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5792744366562842766, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: m_Name
+      value: CrabMonster
+      objectReference: {fileID: 0}
+    - target: {fileID: 5794526363542072584, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 651.64923
+      objectReference: {fileID: 0}
+    - target: {fileID: 5794526363542072584, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 109.032104
+      objectReference: {fileID: 0}
+    - target: {fileID: 5794526363542072584, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1072
+      objectReference: {fileID: 0}
+    - target: {fileID: 5794526363542072584, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5794526363542072584, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5794526363542072584, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5794526363542072584, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5794526363542072584, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5794526363542072584, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5794526363542072584, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1557585880}
+    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: chaseRange
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: chaseSpeed
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: wanderSpeed
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: attackCooldown
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: detectionRange
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: exitWaterSpeed
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: predictionTime
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: stuckCheckTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: enableDebugLogs
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: lostTargetDelay
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: waterCheckRadius
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: interceptDistance
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: shoreSearchRadius
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: pathUpdateInterval
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: usePredictiveChasing
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
 --- !u!1 &2137221507 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1507636620937791836, guid: 7097ba7ba649e1f41bba232312bdcbd8, type: 3}
@@ -15518,4 +15660,4 @@ SceneRoots:
   - {fileID: 1710470198}
   - {fileID: 7774478}
   - {fileID: 305768403}
-  - {fileID: 1020209512}
+  - {fileID: 2133103746}
