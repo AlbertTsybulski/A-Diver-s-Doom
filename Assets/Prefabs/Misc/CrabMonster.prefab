@@ -4426,10 +4426,22 @@ MonoBehaviour:
   detectionRange: 300
   chaseRange: 150
   attackRange: 15
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 1
   wanderSpeed: 25
   chaseSpeed: 40
   wanderRadius: 100
   wanderInterval: 3
+  intimidateAnimations:
+  - Intimidate_1
+  - Intimidate_2
+  - Intimidate_3
+  intimidationDuration: 5
+  intimidateSounds:
+  - {fileID: 8300000, guid: 33142aa798cacea4b9b672fbf5531fce, type: 3}
+  - {fileID: 8300000, guid: a70723e109e6b6b4999f6259f6533023, type: 3}
+  - {fileID: 8300000, guid: b5fe5169afb193b4ba8fd9c40589cbf0, type: 3}
   waterLayer:
     serializedVersion: 2
     m_Bits: 16
@@ -4440,7 +4452,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   climbSpeed: 10
-  climbDetectionDistance: 1.5
+  climbDetectionDistance: 15
   maxClimbAngle: 90
   rotationSpeed: 8
   enableClimbing: 1

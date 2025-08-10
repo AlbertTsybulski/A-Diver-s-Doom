@@ -15453,28 +15453,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1557585880}
     - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: chaseRange
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
       propertyPath: chaseSpeed
-      value: 40
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
       propertyPath: wanderSpeed
-      value: 25
+      value: 35
       objectReference: {fileID: 0}
     - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
       propertyPath: attackCooldown
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: detectionRange
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: exitWaterSpeed
-      value: 20
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
       propertyPath: predictionTime
@@ -15485,24 +15473,12 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: enableDebugLogs
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
       propertyPath: lostTargetDelay
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: waterCheckRadius
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
       propertyPath: interceptDistance
       value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
-      propertyPath: shoreSearchRadius
-      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 7358268914071251601, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
       propertyPath: pathUpdateInterval
