@@ -4424,13 +4424,13 @@ MonoBehaviour:
   animator: {fileID: 5850578553012415794}
   player: {fileID: 0}
   detectionRange: 300
-  chaseRange: 150
+  chaseRange: 200
   attackRange: 15
   playerLayer:
     serializedVersion: 2
     m_Bits: 1
-  wanderSpeed: 25
-  chaseSpeed: 40
+  wanderSpeed: 50
+  chaseSpeed: 75
   wanderRadius: 100
   wanderInterval: 3
   intimidateAnimations:
@@ -4452,12 +4452,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   climbSpeed: 10
-  climbDetectionDistance: 15
-  maxClimbAngle: 90
-  rotationSpeed: 8
+  climbDetectionDistance: 20
+  maxClimbAngle: 360
+  rotationSpeed: 100
   enableClimbing: 1
   attackDamage: 25
-  attackCooldown: 0.25
+  attackCooldown: 0.1
   attackAnimations:
   - Attack_1
   - Attack_2
