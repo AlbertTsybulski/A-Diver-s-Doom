@@ -51,15 +51,14 @@ public class CrabMonsterAI : MonoBehaviour
     public string walkingFastParam = "Walk_Cycle_1";
     public string idleParam = "Fight_Idle_1";
     
-    // State management
+    // State management - climbing is now integrated into movement, not a separate state
     public enum CrabState
     {
         Wandering,
         Intimidating,
         Chasing,
         Attacking,
-        ExitingWater, // New state for getting out of water
-        Climbing, // New state for climbing surfaces
+        ExitingWater,
         Idle
     }
     
@@ -91,6 +90,55 @@ public class CrabMonsterAI : MonoBehaviour
     
     [Header("Debug")]
     public bool enableDebugLogs = true; // Enable by default to see what's happening
+    
+    [ContextMenu("Debug Climbing Status")]
+    void DebugClimbingStatus()
+    {
+        Debug.Log($"=== CLIMBING DEBUG for {gameObject.name} ===");
+        Debug.Log($"Enable Climbing: {enableClimbing}");
+        Debug.Log($"Has Climb Target: {hasClimbTarget}");
+        Debug.Log($"Is Climbing: {isClimbing}");
+        Debug.Log($"Current State: {currentState}");
+        Debug.Log($"Climb Detection Distance: {climbDetectionDistance}");
+        Debug.Log($"Max Climb Angle: {maxClimbAngle}");
+        Debug.Log($"Climbable Layer: {climbableLayer.value}");
+        
+        if (hasClimbTarget)
+        {
+            Debug.Log($"Climb Target Surface Angle: {Vector3.Angle(Vector3.up, targetSurfaceNormal):F1}°");
+            Debug.Log($"Climb Target Normal: {targetSurfaceNormal}");
+            Debug.Log($"Climb Target Distance: {currentClimbSurface.distance:F2}m");
+        }
+        else
+        {
+            Debug.Log("No climb target found - checking for surfaces...");
+            CheckClimbability();
+        }
+        
+        Debug.Log($"================================");
+    }
+    
+    [ContextMenu("Force Start Climbing")]
+    void ForceStartClimbing()
+    {
+        if (player != null)
+        {
+            Debug.Log($"Forcing climb toward player at {player.position}");
+            CheckClimbability();
+            if (hasClimbTarget)
+            {
+                PerformClimbMovement(player.position);
+            }
+            else
+            {
+                Debug.LogWarning("No climb target available for forced climbing!");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("No player reference for forced climbing!");
+        }
+    }
 
     void Start()
     {
@@ -167,7 +215,7 @@ public class CrabMonsterAI : MonoBehaviour
         // Always check water status - this is the primary objective
         CheckWaterStatus();
         
-        // Check for climbable surfaces and update rotation
+        // Check for climbable surfaces - now integrated into movement
         if (enableClimbing)
         {
             CheckClimbability();
@@ -176,14 +224,14 @@ public class CrabMonsterAI : MonoBehaviour
         
         if (enableDebugLogs && Time.time % 2f < 0.1f) // Log every 2 seconds
         {
-            Debug.Log($"Crab {gameObject.name}: State={currentState}, Distance={distanceToPlayer:F1}m, InWater={isInWater}, NavAgent.isOnNavMesh={navMeshAgent.isOnNavMesh}");
+            Debug.Log($"Crab {gameObject.name}: State={currentState}, Distance={distanceToPlayer:F1}m, InWater={isInWater}, Climbing={isClimbing}, HasClimbTarget={hasClimbTarget}");
         }
         
         // Update timers
         wanderTimer -= Time.deltaTime;
         attackTimer -= Time.deltaTime;
         
-        // State machine
+        // State machine - climbing is now integrated into each state's movement
         switch (currentState)
         {
             case CrabState.Wandering:
@@ -209,22 +257,25 @@ public class CrabMonsterAI : MonoBehaviour
             case CrabState.ExitingWater:
                 HandleExitingWater(distanceToPlayer);
                 break;
-                
-            case CrabState.Climbing:
-                HandleClimbing(distanceToPlayer);
-                break;
         }
         
-        // Update animation based on current state
+        // Update animation based on current state and movement
         UpdateAnimations();
     }
     
     void HandleWandering(float distanceToPlayer)
     {
+        // Water takes highest priority
+        if (isInWater)
+        {
+            SetState(CrabState.ExitingWater);
+            return;
+        }
+        
         // Check if player is within detection range
         if (distanceToPlayer <= detectionRange && CanSeePlayer())
         {
-            SetState(CrabState.Intimidating); // Changed from Chasing to Intimidating
+            SetState(CrabState.Intimidating);
             return;
         }
         
@@ -234,18 +285,37 @@ public class CrabMonsterAI : MonoBehaviour
             SetNewWanderTarget();
             wanderTimer = wanderInterval;
         }
+        
+        // Integrated movement - climb if needed, otherwise use NavMesh
+        if (ShouldClimbToTarget(wanderTarget))
+        {
+            PerformClimbMovement(wanderTarget);
+        }
+        else
+        {
+            // Ensure NavMesh is active for normal movement
+            if (navMeshAgent != null && navMeshAgent.isActiveAndEnabled && navMeshAgent.isStopped)
+            {
+                navMeshAgent.isStopped = false;
+                navMeshAgent.speed = wanderSpeed;
+            }
+        }
     }
     
     void HandleIntimidating(float distanceToPlayer)
     {
-        // Ensure we're completely stopped during intimidation
-        if (navMeshAgent != null && navMeshAgent.isActiveAndEnabled)
+        // Water escape overrides intimidation
+        if (isInWater)
         {
-            if (!navMeshAgent.isStopped)
-            {
-                navMeshAgent.isStopped = true;
-                navMeshAgent.velocity = Vector3.zero;
-            }
+            SetState(CrabState.ExitingWater);
+            return;
+        }
+        
+        // Ensure we're completely stopped during intimidation
+        if (navMeshAgent != null && navMeshAgent.isActiveAndEnabled && !navMeshAgent.isStopped)
+        {
+            navMeshAgent.isStopped = true;
+            navMeshAgent.velocity = Vector3.zero;
         }
         
         // Face the player continuously during intimidation
@@ -272,6 +342,13 @@ public class CrabMonsterAI : MonoBehaviour
     
     void HandleChasing(float distanceToPlayer)
     {
+        // Water escape overrides chasing
+        if (isInWater)
+        {
+            SetState(CrabState.ExitingWater);
+            return;
+        }
+        
         // Check if player is too far away
         if (distanceToPlayer > chaseRange)
         {
@@ -286,30 +363,42 @@ public class CrabMonsterAI : MonoBehaviour
             return;
         }
         
-        // Ensure NavMesh agent is properly configured for chasing
-        if (navMeshAgent != null && navMeshAgent.isActiveAndEnabled)
+        // Integrated movement - climb toward player if needed, otherwise use NavMesh
+        if (ShouldClimbToTarget(player.position))
         {
-            if (navMeshAgent.isStopped)
+            PerformClimbMovement(player.position);
+        }
+        else
+        {
+            // Use NavMesh for normal chasing
+            if (navMeshAgent != null && navMeshAgent.isActiveAndEnabled)
             {
-                navMeshAgent.isStopped = false;
-                navMeshAgent.speed = chaseSpeed;
+                if (navMeshAgent.isStopped)
+                {
+                    navMeshAgent.isStopped = false;
+                    navMeshAgent.speed = chaseSpeed;
+                }
+                navMeshAgent.SetDestination(player.position);
             }
-            
-            // Continuously update destination while chasing
-            navMeshAgent.SetDestination(player.position);
         }
     }
     
     void HandleAttacking(float distanceToPlayer)
     {
-        // Ensure we're completely stopped during attack
-        if (navMeshAgent != null && navMeshAgent.isActiveAndEnabled)
+        // Water escape can interrupt attacks
+        if (isInWater)
         {
-            if (!navMeshAgent.isStopped)
-            {
-                navMeshAgent.isStopped = true;
-                navMeshAgent.velocity = Vector3.zero;
-            }
+            StopAllCoroutines();
+            isAttacking = false;
+            SetState(CrabState.ExitingWater);
+            return;
+        }
+        
+        // Ensure we're completely stopped during attack
+        if (navMeshAgent != null && navMeshAgent.isActiveAndEnabled && !navMeshAgent.isStopped)
+        {
+            navMeshAgent.isStopped = true;
+            navMeshAgent.velocity = Vector3.zero;
         }
         
         if (!isAttacking)
@@ -320,6 +409,13 @@ public class CrabMonsterAI : MonoBehaviour
     
     void HandleIdle(float distanceToPlayer)
     {
+        // Check for water even when idle
+        if (isInWater)
+        {
+            SetState(CrabState.ExitingWater);
+            return;
+        }
+        
         // Stop moving
         if (navMeshAgent != null && navMeshAgent.isActiveAndEnabled)
         {
@@ -329,7 +425,7 @@ public class CrabMonsterAI : MonoBehaviour
         // Check if player comes back to life or gets close
         if (playerHealth != null && playerHealth.IsAlive() && distanceToPlayer <= detectionRange && CanSeePlayer())
         {
-            SetState(CrabState.Intimidating); // Changed from Chasing to Intimidating
+            SetState(CrabState.Intimidating);
         }
     }
     
@@ -348,36 +444,34 @@ public class CrabMonsterAI : MonoBehaviour
                 case CrabState.Wandering:
                     navMeshAgent.isStopped = false;
                     navMeshAgent.speed = wanderSpeed;
+                    navMeshAgent.autoBraking = true;
                     break;
                     
                 case CrabState.Intimidating:
                     navMeshAgent.isStopped = true;
-                    navMeshAgent.velocity = Vector3.zero; // Force stop immediately
+                    navMeshAgent.velocity = Vector3.zero;
                     break;
                     
                 case CrabState.Chasing:
                     navMeshAgent.isStopped = false;
                     navMeshAgent.speed = chaseSpeed;
+                    navMeshAgent.autoBraking = false;
                     break;
                     
                 case CrabState.Attacking:
                     navMeshAgent.isStopped = true;
-                    navMeshAgent.velocity = Vector3.zero; // Force stop immediately
+                    navMeshAgent.velocity = Vector3.zero;
                     break;
                     
                 case CrabState.Idle:
                     navMeshAgent.isStopped = true;
-                    navMeshAgent.velocity = Vector3.zero; // Force stop immediately
+                    navMeshAgent.velocity = Vector3.zero;
                     break;
                     
                 case CrabState.ExitingWater:
                     navMeshAgent.isStopped = false;
                     navMeshAgent.speed = exitWaterSpeed;
-                    navMeshAgent.autoBraking = false; // Keep moving aggressively to shore
-                    break;
-                    
-                case CrabState.Climbing:
-                    navMeshAgent.isStopped = true; // Disable NavMesh when climbing manually
+                    navMeshAgent.autoBraking = false;
                     break;
             }
         }
@@ -477,6 +571,11 @@ public class CrabMonsterAI : MonoBehaviour
                 // Check if the surface angle is climbable
                 float surfaceAngle = Vector3.Angle(Vector3.up, hit.normal);
                 
+                if (enableDebugLogs && Time.time % 3f < 0.1f) // Debug surface detection
+                {
+                    Debug.Log($"Crab {gameObject.name}: Found surface at angle {surfaceAngle:F1}° in direction {direction}, distance {hit.distance:F2}m");
+                }
+                
                 if (surfaceAngle > 15f && surfaceAngle <= maxClimbAngle) // Not too flat, not too steep
                 {
                     float distance = hit.distance;
@@ -490,16 +589,28 @@ public class CrabMonsterAI : MonoBehaviour
             }
         }
         
+        bool previousHasClimbTarget = hasClimbTarget;
+        
         if (foundClimbableSurface)
         {
             currentClimbSurface = bestHit;
             hasClimbTarget = true;
             climbDirection = bestHit.normal;
             targetSurfaceNormal = bestHit.normal;
+            
+            if (!previousHasClimbTarget && enableDebugLogs)
+            {
+                Debug.Log($"Crab {gameObject.name}: Found climbable surface! Angle: {Vector3.Angle(Vector3.up, bestHit.normal):F1}°, Distance: {closestDistance:F2}m");
+            }
         }
         else
         {
             hasClimbTarget = false;
+            
+            if (previousHasClimbTarget && enableDebugLogs)
+            {
+                Debug.Log($"Crab {gameObject.name}: Lost climbable surface");
+            }
         }
     }
     
@@ -507,10 +618,16 @@ public class CrabMonsterAI : MonoBehaviour
     {
         if (!enableClimbing || !hasClimbTarget) return false;
         
-        // Check if NavMesh path is blocked or if there's a better climbing route
-        if (navMeshAgent != null && navMeshAgent.hasPath)
+        // Don't climb during certain behaviors
+        if (currentState == CrabState.Attacking || 
+            currentState == CrabState.Intimidating)
         {
-            // If we have a clear NavMesh path, don't climb unless the path is very long
+            return false;
+        }
+        
+        // Check if NavMesh path is blocked or significantly longer
+        if (navMeshAgent != null && navMeshAgent.hasPath && !isInWater)
+        {
             float pathDistance = GetPathDistance();
             float directDistance = Vector3.Distance(transform.position, navMeshAgent.destination);
             
@@ -521,15 +638,22 @@ public class CrabMonsterAI : MonoBehaviour
             }
         }
         
-        // Check if climbing would help reach the target
-        Vector3 targetPosition = Vector3.zero;
-        if (currentState == CrabState.Chasing && player != null)
+        // For water escape, always try climbing if in water and have a climb target
+        if (currentState == CrabState.ExitingWater && isInWater)
         {
-            targetPosition = player.position;
+            return true;
         }
-        else if (currentState == CrabState.Wandering)
+        
+        // For other behaviors, check if climbing helps reach the target
+        Vector3 targetPosition = Vector3.zero;
+        switch (currentState)
         {
-            targetPosition = wanderTarget;
+            case CrabState.Chasing:
+                if (player != null) targetPosition = player.position;
+                break;
+            case CrabState.Wandering:
+                targetPosition = wanderTarget;
+                break;
         }
         
         if (targetPosition != Vector3.zero)
@@ -538,153 +662,53 @@ public class CrabMonsterAI : MonoBehaviour
             Vector3 toTarget = (targetPosition - transform.position).normalized;
             float climbAlignment = Vector3.Dot(climbDirection, toTarget);
             
-            return climbAlignment > 0.3f; // Climbing direction is somewhat aligned with target
+            return climbAlignment > 0.2f; // Lower threshold for more climbing
         }
         
         return false;
     }
     
-    float GetPathDistance()
+    // New method: Check if we should climb to reach a specific target
+    bool ShouldClimbToTarget(Vector3 targetPosition)
     {
-        if (navMeshAgent == null || !navMeshAgent.hasPath) return 0f;
-        
-        float distance = 0f;
-        Vector3[] corners = navMeshAgent.path.corners;
-        
-        for (int i = 1; i < corners.Length; i++)
+        if (!enableClimbing || !hasClimbTarget)
         {
-            distance += Vector3.Distance(corners[i - 1], corners[i]);
-        }
-        
-        return distance;
-    }
-    
-    void HandleClimbing(float distanceToPlayer)
-    {
-        // Water escape always takes priority
-        if (isInWater)
-        {
-            SetState(CrabState.ExitingWater);
-            return;
-        }
-        
-        // Check if we should stop climbing
-        if (!hasClimbTarget || !ShouldContinueClimbing())
-        {
-            // Stop climbing and return to appropriate state
-            isClimbing = false;
-            if (distanceToPlayer <= detectionRange)
+            if (enableDebugLogs && Time.time % 4f < 0.1f) // Debug every 4 seconds
             {
-                SetState(CrabState.Chasing);
-                PlayChaseSound();
+                Debug.Log($"Crab {gameObject.name}: ShouldClimbToTarget = false. EnableClimbing: {enableClimbing}, HasClimbTarget: {hasClimbTarget}");
             }
-            else
-            {
-                SetState(CrabState.Wandering);
-            }
-            return;
+            return false;
         }
         
-        // Perform climbing movement
-        PerformClimbMovement();
-        
-        // Update climbing status
-        if (!isClimbing)
-        {
-            isClimbing = true;
-            if (enableDebugLogs) Debug.Log($"Crab {gameObject.name}: Started climbing surface at angle {Vector3.Angle(Vector3.up, targetSurfaceNormal):F1}°");
-        }
-    }
-    
-    bool ShouldContinueClimbing()
-    {
-        // Continue climbing if we still have a target and it's beneficial
-        if (!hasClimbTarget) return false;
-        
-        // Stop climbing if we've reached a flat surface
-        float surfaceAngle = Vector3.Angle(Vector3.up, targetSurfaceNormal);
-        if (surfaceAngle < 15f) return false;
-        
-        // Stop climbing if we're no longer against a climbable surface
-        RaycastHit hit;
-        Vector3 rayStart = transform.position + Vector3.up * 0.5f;
-        if (!Physics.Raycast(rayStart, transform.forward, out hit, climbDetectionDistance * 0.5f, climbableLayer))
+        // Don't climb during stationary states
+        if (currentState == CrabState.Attacking || currentState == CrabState.Intimidating)
         {
             return false;
         }
         
-        return true;
-    }
-    
-    void PerformClimbMovement()
-    {
-        if (!hasClimbTarget) return;
-        
-        // Calculate climbing movement direction
-        Vector3 upDirection = -targetSurfaceNormal; // Direction away from surface (up relative to surface)
-        Vector3 forwardDirection = Vector3.Cross(upDirection, transform.right).normalized;
-        
-        // Determine target direction based on current state
-        Vector3 targetDirection = Vector3.zero;
-        
-        if (currentState == CrabState.Chasing && player != null)
+        // Always try climbing if we're in water trying to escape
+        if (currentState == CrabState.ExitingWater && isInWater)
         {
-            Vector3 toPlayer = (player.position - transform.position).normalized;
-            targetDirection = Vector3.ProjectOnPlane(toPlayer, targetSurfaceNormal).normalized;
-        }
-        else
-        {
-            // Default climbing direction - mostly up the surface
-            targetDirection = upDirection;
+            if (enableDebugLogs && Time.time % 4f < 0.1f)
+            {
+                Debug.Log($"Crab {gameObject.name}: Climbing because escaping water");
+            }
+            return true;
         }
         
-        // Move in the calculated direction
-        Vector3 moveDirection = targetDirection * climbSpeed * Time.deltaTime;
-        transform.position += moveDirection;
+        // Simplified logic - check if climbing direction helps reach target
+        Vector3 toTargetDirection = (targetPosition - transform.position).normalized;
+        float alignment = Vector3.Dot(-targetSurfaceNormal, toTargetDirection);
         
-        // Keep the crab on the surface
-        RaycastHit surfaceHit;
-        Vector3 rayStart = transform.position + targetSurfaceNormal * 0.5f;
-        if (Physics.Raycast(rayStart, -targetSurfaceNormal, out surfaceHit, 1f, climbableLayer))
-        {
-            transform.position = surfaceHit.point + targetSurfaceNormal * 0.1f; // Stay slightly off the surface
-            targetSurfaceNormal = surfaceHit.normal; // Update surface normal
-        }
-    }
-    
-    void UpdateTerrainRotation()
-    {
-        if (!enableClimbing) return;
+        // More generous climbing threshold
+        bool shouldClimb = alignment > 0.1f;
         
-        // Cast a ray downward to detect the ground surface
-        RaycastHit hit;
-        Vector3 rayStart = transform.position + Vector3.up * 0.5f;
+        if (enableDebugLogs && Time.time % 4f < 0.1f)
+        {
+            Debug.Log($"Crab {gameObject.name}: ShouldClimbToTarget = {shouldClimb}. Alignment: {alignment:F2}, Target: {targetPosition}, Current: {transform.position}");
+        }
         
-        if (Physics.Raycast(rayStart, Vector3.down, out hit, 2f))
-        {
-            // Calculate the desired rotation to match the terrain
-            Vector3 surfaceNormal = hit.normal;
-            Vector3 forward = transform.forward;
-            
-            // Project forward direction onto the surface plane
-            Vector3 projectedForward = Vector3.ProjectOnPlane(forward, surfaceNormal).normalized;
-            
-            // Create rotation that aligns with the surface
-            Quaternion targetRotation = Quaternion.LookRotation(projectedForward, surfaceNormal);
-            
-            // Smoothly rotate towards the target rotation
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-        }
-        else
-        {
-            // If no ground detected, gradually return to upright position
-            Vector3 forward = transform.forward;
-            forward.y = 0; // Remove any vertical component
-            forward.Normalize();
-            
-            Quaternion uprightRotation = Quaternion.LookRotation(forward, Vector3.up);
-            transform.rotation = Quaternion.Slerp(transform.rotation, uprightRotation, rotationSpeed * 0.5f * Time.deltaTime);
-        }
+        return shouldClimb;
     }
     
     void HandleExitingWater(float distanceToPlayer)
@@ -708,20 +732,33 @@ public class CrabMonsterAI : MonoBehaviour
             return;
         }
         
-        // We're still in water - find the nearest shore
+        // Find the nearest shore if needed
         if (!hasFoundShore || Vector3.Distance(transform.position, nearestShorePoint) < 2f)
         {
             FindNearestShore();
         }
         
-        // Move toward shore
-        if (hasFoundShore && navMeshAgent != null && navMeshAgent.isActiveAndEnabled)
+        // Integrated movement - climb toward shore if needed, otherwise use NavMesh
+        if (hasFoundShore && ShouldClimbToTarget(nearestShorePoint))
         {
-            navMeshAgent.SetDestination(nearestShorePoint);
-            
-            if (enableDebugLogs && Time.time % 3f < 0.1f) // Log every 3 seconds
+            PerformClimbMovement(nearestShorePoint);
+        }
+        else if (hasFoundShore)
+        {
+            // Use NavMesh to reach shore
+            if (navMeshAgent != null && navMeshAgent.isActiveAndEnabled)
             {
-                Debug.Log($"Crab {gameObject.name}: Moving to shore at {nearestShorePoint} (Distance: {Vector3.Distance(transform.position, nearestShorePoint):F1}m)");
+                if (navMeshAgent.isStopped)
+                {
+                    navMeshAgent.isStopped = false;
+                    navMeshAgent.speed = exitWaterSpeed;
+                }
+                navMeshAgent.SetDestination(nearestShorePoint);
+                
+                if (enableDebugLogs && Time.time % 3f < 0.1f)
+                {
+                    Debug.Log($"Crab {gameObject.name}: Moving to shore at {nearestShorePoint} (Distance: {Vector3.Distance(transform.position, nearestShorePoint):F1}m)");
+                }
             }
         }
     }
@@ -941,94 +978,60 @@ public class CrabMonsterAI : MonoBehaviour
     {
         if (animator == null) return;
         
-        // COMPLETELY SKIP animation updates during attacks or intimidation
-        // This prevents any interference with trigger-based animations
+        // Skip animation updates during attacks or intimidation with active animations
         if ((currentState == CrabState.Attacking && isAttacking) || 
             (currentState == CrabState.Intimidating && isIntimidating))
         {
-            // Do not touch any animation parameters during these states
             return;
         }
         
-        // Cache current animation states to avoid unnecessary changes
-        bool currentWalkingSlow = animator.GetBool(walkingSlowParam);
-        bool currentWalkingFast = animator.GetBool(walkingFastParam);
-        bool currentIdle = animator.GetBool(idleParam);
-        
-        // Simple animation logic
+        // Determine animation based on movement and behavior
         bool targetWalkingSlow = false;
         bool targetWalkingFast = false;
         bool targetIdle = false;
         
-        // Determine target animation state
-        switch (currentState)
+        // Check if we're moving (either via NavMesh or climbing)
+        bool isMoving = false;
+        
+        if (isClimbing)
         {
-            case CrabState.Wandering:
-                if (navMeshAgent != null && !navMeshAgent.isStopped && navMeshAgent.velocity.magnitude > 0.2f)
-                {
+            // Always use slow animation for climbing
+            isMoving = true;
+            targetWalkingSlow = true;
+        }
+        else if (navMeshAgent != null && !navMeshAgent.isStopped)
+        {
+            isMoving = navMeshAgent.velocity.magnitude > 0.2f;
+        }
+        
+        if (!isMoving)
+        {
+            targetIdle = true;
+        }
+        else if (!isClimbing)
+        {
+            // Determine animation speed based on current state (when not climbing)
+            switch (currentState)
+            {
+                case CrabState.Wandering:
                     targetWalkingSlow = true;
-                }
-                else
-                {
-                    targetIdle = true;
-                }
-                break;
-                
-            case CrabState.Chasing:
-                if (navMeshAgent != null && !navMeshAgent.isStopped && navMeshAgent.velocity.magnitude > 0.2f)
-                {
+                    break;
+                    
+                case CrabState.Chasing:
+                case CrabState.ExitingWater:
                     targetWalkingFast = true;
-                }
-                else
-                {
+                    break;
+                    
+                default:
                     targetIdle = true;
-                }
-                break;
-                
-            case CrabState.Intimidating:
-            case CrabState.Attacking:
-            case CrabState.Idle:
-                targetIdle = true;
-                break;
-                
-            case CrabState.ExitingWater:
-                if (navMeshAgent != null && !navMeshAgent.isStopped && navMeshAgent.velocity.magnitude > 0.2f)
-                {
-                    targetWalkingFast = true;
-                }
-                else
-                {
-                    targetIdle = true;
-                }
-                break;
-                
-            case CrabState.Climbing:
-                if (isClimbing)
-                {
-                    targetWalkingSlow = true;
-                }
-                else
-                {
-                    targetIdle = true;
-                }
-                break;
+                    break;
+            }
         }
         
-        // Only update parameters if they need to change
-        if (currentWalkingSlow != targetWalkingSlow)
-        {
-            animator.SetBool(walkingSlowParam, targetWalkingSlow);
-        }
-        
-        if (currentWalkingFast != targetWalkingFast)
-        {
-            animator.SetBool(walkingFastParam, targetWalkingFast);
-        }
-        
-        if (currentIdle != targetIdle)
-        {
-            animator.SetBool(idleParam, targetIdle);
-        }
+        // Update animation parameters
+        animator.SetBool(walkingSlowParam, targetWalkingSlow);
+        animator.SetBool(walkingFastParam, targetWalkingFast);
+        animator.SetBool(idleParam, targetIdle);
     }
     
     void PlayAttackSound()
@@ -1087,25 +1090,38 @@ public class CrabMonsterAI : MonoBehaviour
             Gizmos.DrawWireSphere(transform.position, shoreSearchRadius);
         }
         
-        // Draw current target
-        if (currentState == CrabState.Wandering)
+        // Draw current target based on state
+        switch (currentState)
         {
-            Gizmos.color = Color.green;
-            Gizmos.DrawSphere(wanderTarget, 0.5f);
-            Gizmos.DrawLine(transform.position, wanderTarget);
+            case CrabState.Wandering:
+                if (wanderTarget != Vector3.zero)
+                {
+                    Gizmos.color = Color.green;
+                    Gizmos.DrawSphere(wanderTarget, 0.5f);
+                    Gizmos.DrawLine(transform.position, wanderTarget);
+                }
+                break;
+                
+            case CrabState.Chasing:
+                if (player != null)
+                {
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawLine(transform.position, player.position);
+                }
+                break;
+                
+            case CrabState.ExitingWater:
+                if (hasFoundShore)
+                {
+                    Gizmos.color = Color.magenta;
+                    Gizmos.DrawSphere(nearestShorePoint, 1f);
+                    Gizmos.DrawLine(transform.position, nearestShorePoint);
+                }
+                break;
         }
-        else if (currentState == CrabState.Chasing && player != null)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawLine(transform.position, player.position);
-        }
-        else if (currentState == CrabState.ExitingWater && hasFoundShore)
-        {
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawSphere(nearestShorePoint, 1f);
-            Gizmos.DrawLine(transform.position, nearestShorePoint);
-        }
-        else if (currentState == CrabState.Climbing && hasClimbTarget)
+        
+        // Draw climbing info if currently climbing (integrated with any state)
+        if (isClimbing && hasClimbTarget)
         {
             Gizmos.color = Color.yellow;
             Vector3 climbPoint = currentClimbSurface.point;
@@ -1117,18 +1133,230 @@ public class CrabMonsterAI : MonoBehaviour
             Gizmos.DrawRay(climbPoint, targetSurfaceNormal * 2f);
         }
         
-        // Draw line of sight
+        // Draw climb detection range when climbing is possible
+        if (enableClimbing)
+        {
+            // Always show climb detection range
+            Gizmos.color = hasClimbTarget ? (isClimbing ? Color.yellow : Color.orange) : Color.gray;
+            Gizmos.DrawWireSphere(transform.position + Vector3.up * 0.5f, climbDetectionDistance);
+            
+            // Draw climbing rays to show what we're detecting
+            Vector3[] directions = {
+                transform.forward,
+                transform.right,
+                -transform.right,
+                transform.forward + transform.right,
+                transform.forward - transform.right
+            };
+            
+            foreach (Vector3 direction in directions)
+            {
+                Vector3 rayStart = transform.position + Vector3.up * 0.5f;
+                Gizmos.color = Color.cyan;
+                Gizmos.DrawRay(rayStart, direction * climbDetectionDistance);
+            }
+        }
+        
+        // Draw line of sight to player
         if (player != null)
         {
             Gizmos.color = CanSeePlayer() ? Color.red : Color.gray;
             Gizmos.DrawLine(transform.position + Vector3.up * 1.5f, player.position);
         }
+    }
+    
+    float GetPathDistance()
+    {
+        if (navMeshAgent == null || !navMeshAgent.hasPath) return 0f;
         
-        // Draw climb detection range
-        if (enableClimbing)
+        float distance = 0f;
+        Vector3[] corners = navMeshAgent.path.corners;
+        
+        for (int i = 1; i < corners.Length; i++)
         {
-            Gizmos.color = isClimbing ? Color.yellow : Color.gray;
-            Gizmos.DrawWireSphere(transform.position + Vector3.up * 0.5f, climbDetectionDistance);
+            distance += Vector3.Distance(corners[i - 1], corners[i]);
         }
+        
+        return distance;
+    }
+    
+    // Overload for calculating distance of a specific path
+    float GetPathDistance(NavMeshPath path)
+    {
+        if (path == null || path.corners.Length < 2) return 0f;
+        
+        float distance = 0f;
+        Vector3[] corners = path.corners;
+        
+        for (int i = 1; i < corners.Length; i++)
+        {
+            distance += Vector3.Distance(corners[i - 1], corners[i]);
+        }
+        
+        return distance;
+    }
+
+    void UpdateTerrainRotation()
+    {
+        if (!enableClimbing) return;
+        
+        // Cast a ray downward to detect the ground surface
+        RaycastHit hit;
+        Vector3 rayStart = transform.position + Vector3.up * 0.5f;
+        
+        if (Physics.Raycast(rayStart, Vector3.down, out hit, 2f))
+        {
+            // Calculate the desired rotation to match the terrain
+            Vector3 surfaceNormal = hit.normal;
+            Vector3 forward = transform.forward;
+            
+            // Project forward direction onto the surface plane
+            Vector3 projectedForward = Vector3.ProjectOnPlane(forward, surfaceNormal).normalized;
+            
+            // Create rotation that aligns with the surface
+            Quaternion targetRotation = Quaternion.LookRotation(projectedForward, surfaceNormal);
+            
+            // Smoothly rotate towards the target rotation
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        }
+        else
+        {
+            // If no ground detected, gradually return to upright position
+            Vector3 forward = transform.forward;
+            forward.y = 0; // Remove any vertical component
+            forward.Normalize();
+            
+            Quaternion uprightRotation = Quaternion.LookRotation(forward, Vector3.up);
+            transform.rotation = Quaternion.Slerp(transform.rotation, uprightRotation, rotationSpeed * 0.5f * Time.deltaTime);
+        }
+    }
+    
+    void PerformClimbMovement(Vector3 targetPosition)
+    {
+        if (!hasClimbTarget)
+        {
+            if (enableDebugLogs)
+            {
+                Debug.LogWarning($"Crab {gameObject.name}: PerformClimbMovement called but no climb target!");
+            }
+            return;
+        }
+        
+        // Stop NavMesh agent while climbing
+        if (navMeshAgent != null && navMeshAgent.isActiveAndEnabled && !navMeshAgent.isStopped)
+        {
+            navMeshAgent.isStopped = true;
+            if (enableDebugLogs)
+            {
+                Debug.Log($"Crab {gameObject.name}: Stopped NavMesh agent for climbing");
+            }
+        }
+        
+        // Set climbing status
+        if (!isClimbing)
+        {
+            isClimbing = true;
+            if (enableDebugLogs) Debug.Log($"Crab {gameObject.name}: Started climbing toward {targetPosition} during {currentState}");
+        }
+        
+        // Calculate climbing movement direction
+        Vector3 upDirection = -targetSurfaceNormal; // Direction away from surface
+        Vector3 targetDirection = upDirection; // Default: climb up
+        
+        // If we have a target position, try to move toward it while climbing
+        if (targetPosition != Vector3.zero)
+        {
+            Vector3 toTarget = (targetPosition - transform.position).normalized;
+            // Project target direction onto the climbable surface plane
+            targetDirection = Vector3.ProjectOnPlane(toTarget, targetSurfaceNormal).normalized;
+            
+            // Bias toward climbing up to avoid getting stuck
+            float upwardBias = 0.3f; // Reduced bias for more target-directed movement
+            targetDirection = Vector3.Lerp(targetDirection, upDirection, upwardBias).normalized;
+        }
+        
+        // Determine speed based on current state
+        float currentClimbSpeed = climbSpeed;
+        switch (currentState)
+        {
+            case CrabState.Chasing:
+                currentClimbSpeed = climbSpeed * 1.3f; // Faster when chasing
+                break;
+            case CrabState.ExitingWater:
+                currentClimbSpeed = climbSpeed * 1.2f; // Faster when escaping water
+                break;
+        }
+        
+        // Move in the calculated direction
+        Vector3 moveDirection = targetDirection * currentClimbSpeed * Time.deltaTime;
+        transform.position += moveDirection;
+        
+        if (enableDebugLogs && Time.time % 1f < 0.1f) // Debug movement every second
+        {
+            Debug.Log($"Crab {gameObject.name}: Climbing - Direction: {targetDirection}, Speed: {currentClimbSpeed}, Moving: {moveDirection.magnitude:F3}");
+        }
+        
+        // Keep the crab on the surface
+        RaycastHit surfaceHit;
+        Vector3 rayStart = transform.position + targetSurfaceNormal * 0.5f;
+        if (Physics.Raycast(rayStart, -targetSurfaceNormal, out surfaceHit, 1f, climbableLayer))
+        {
+            transform.position = surfaceHit.point + targetSurfaceNormal * 0.1f; // Stay slightly off the surface
+            targetSurfaceNormal = surfaceHit.normal; // Update surface normal
+        }
+        
+        // Check if we should stop climbing
+        if (!ShouldContinueClimbing())
+        {
+            StopClimbing();
+        }
+    }
+    
+    void StopClimbing()
+    {
+        if (isClimbing)
+        {
+            isClimbing = false;
+            if (enableDebugLogs) Debug.Log($"Crab {gameObject.name}: Stopped climbing, resuming {currentState} movement");
+            
+            // Re-enable NavMesh agent
+            if (navMeshAgent != null && navMeshAgent.isActiveAndEnabled && navMeshAgent.isStopped)
+            {
+                navMeshAgent.isStopped = false;
+                // Set speed based on current state
+                switch (currentState)
+                {
+                    case CrabState.Wandering:
+                        navMeshAgent.speed = wanderSpeed;
+                        break;
+                    case CrabState.Chasing:
+                        navMeshAgent.speed = chaseSpeed;
+                        break;
+                    case CrabState.ExitingWater:
+                        navMeshAgent.speed = exitWaterSpeed;
+                        break;
+                }
+            }
+        }
+    }
+    
+    bool ShouldContinueClimbing()
+    {
+        // Continue climbing if we still have a target and it's beneficial
+        if (!hasClimbTarget) return false;
+        
+        // Stop climbing if we've reached a flat surface
+        float surfaceAngle = Vector3.Angle(Vector3.up, targetSurfaceNormal);
+        if (surfaceAngle < 15f) return false;
+        
+        // Stop climbing if we're no longer against a climbable surface
+        RaycastHit hit;
+        Vector3 rayStart = transform.position + Vector3.up * 0.5f;
+        if (!Physics.Raycast(rayStart, transform.forward, out hit, climbDetectionDistance * 0.5f, climbableLayer))
+        {
+            return false;
+        }
+        
+        return true;
     }
 }
