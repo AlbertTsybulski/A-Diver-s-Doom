@@ -4455,7 +4455,7 @@ MonoBehaviour:
   climbDetectionDistance: 20
   maxClimbAngle: 360
   rotationSpeed: 100
-  enableClimbing: 1
+  enableClimbing: 0
   attackDamage: 25
   attackCooldown: 0.1
   attackAnimations:
